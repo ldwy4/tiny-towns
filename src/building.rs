@@ -30,6 +30,36 @@ impl Building {
         }
     }
 
+    pub fn print_building_90(&self) {
+        println!("Building:");
+        for col in 0..self.shape[0].len() {
+            for row in (0..self.shape.len()).rev() {
+                print!("{},", Tiles::number_to_tile(self.shape[row][col]));
+            }
+            print!("\n");
+        }
+    }
+
+    pub fn print_building_180(&self) {
+        println!("Building:");
+        for row in (0..self.shape.len()).rev() {
+            for col in (0..self.shape[0].len()).rev() {
+                print!("{},", Tiles::number_to_tile(self.shape[row][col]));
+            }
+            print!("\n");
+        }
+    }
+
+    pub fn print_building_270(&self) {
+        println!("Building:");
+        for col in (0..self.shape[0].len()).rev() {
+            for row in 0..self.shape.len() {
+                print!("{},", Tiles::number_to_tile(self.shape[row][col]));
+            }
+            print!("\n");
+        }
+    }
+
     pub fn get_shape(&self) -> [[u8; 4]; 2] {
         self.shape
     }
@@ -77,7 +107,22 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_works() {
+    fn it_rotated_0_match() {
+        let mut player: Player = Player::new();
+        player.place_tile(1, 1, 1);
+        player.place_tile(1, 2, 2);
+        player.place_tile(1, 3, 3);
+        player.place_tile(1, 0, 4);
+        player.place_tile(0, 2, 2);
+        player.place_tile(0, 1, 3);
+
+        let building = Building::new(BuildingType::House, [[1, 2, 3, 0], [0, 0, 0, 0]], false);
+        let result = player.match_building(building);
+        assert_eq!(result, true);
+    }
+
+    #[test]
+    fn it_rotated_90_match() {
         let mut player: Player = Player::new();
         player.place_tile(1, 1, 1);
         player.place_tile(2, 1, 2);
@@ -87,6 +132,41 @@ mod tests {
         player.place_tile(0, 1, 3);
 
         let building = Building::new(BuildingType::House, [[1, 2, 3, 0], [0, 0, 0, 0]], false);
+        let result = player.match_building(building);
+        assert_eq!(result, true);
+    }
+
+    #[test]
+    fn it_rotated_180_match() {
+        let mut player: Player = Player::new();
+        player.place_tile(1, 3, 1);
+        player.place_tile(1, 2, 2);
+        player.place_tile(1, 1, 3);
+        player.place_tile(1, 0, 4);
+        player.place_tile(0, 2, 2);
+        player.place_tile(0, 1, 3);
+
+        let building = Building::new(BuildingType::House, [[1, 2, 3, 0], [0, 0, 0, 0]], false);
+        let result = player.match_building(building);
+        assert_eq!(result, true);
+    }
+
+    #[test]
+    fn it_rotated_270_match() {
+        let mut player: Player = Player::new();
+        player.place_tile(3, 1, 1);
+        player.place_tile(2, 1, 2);
+        player.place_tile(1, 1, 3);
+        player.place_tile(1, 0, 4);
+        player.place_tile(0, 2, 2);
+        player.place_tile(0, 1, 3);
+
+        let building = Building::new(BuildingType::House, [[1, 2, 3, 0], [0, 0, 0, 0]], false);
+        building.print_building();
+        building.print_building_90();
+        building.print_building_180();
+        building.print_building_270();
+        player.print_board();
         let result = player.match_building(building);
         assert_eq!(result, true);
     }

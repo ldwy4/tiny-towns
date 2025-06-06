@@ -134,10 +134,6 @@ impl Player {
     fn verify_building_90_degrees(&self, building: &Building, start_row: usize, start_col: usize) -> bool {
         for col in 0..building.get_shape()[0].len() {
             for row in (0..building.get_shape().len()).rev() {
-                println!(
-                    "row: {}, col: {}",
-                    start_col+(building.get_shape().len()-row), start_row+col
-                );
                 print!("Building: {},", Tiles::number_to_tile(building.get_shape()[row][col]));
                 if !self.match_tile(start_row+col, start_col+(building.get_shape().len()-row-1), building.get_shape()[row][col]) {
                     println!("NOPE! Building cannot be placed on board");
@@ -169,8 +165,8 @@ impl Player {
     fn verify_building_270_degrees(&self, building: &Building, start_row: usize, start_col: usize) -> bool {
         for col in (0..building.get_shape()[0].len()).rev() {
             for row in 0..building.get_shape().len() {
-                print!("{},", Tiles::number_to_tile(building.get_shape()[row][col]));
-                if !self.match_tile(start_col + row, start_row + col, building.get_shape()[row][col]) {
+                print!("Building: {},", Tiles::number_to_tile(building.get_shape()[row][col]));
+                if !self.match_tile(start_row + row, start_col + col, building.get_shape()[row][col]) {
                     println!("NOPE! Building cannot be placed on board");
                     return false;
                 }
