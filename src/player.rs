@@ -1,17 +1,52 @@
 use std::collections::btree_map::Range;
 use std::iter::Rev;
 
-use crate::building::Building;
+use crate::building::{Building, BuildingType};
 use crate::tiles::Tiles;
+
+const BOARD_SIZE:usize = 4;
+// TODO: change be a variable passed in on game creation
+const BUILDING_TYPE_IN_GAME: usize = 7;
+
 pub struct Player {
-    board: [[u8; 4]; 4],
+    board: [[u8; BOARD_SIZE]; BOARD_SIZE],
     score: i32,
 }
 
+pub enum TileType {
+    BuildingType(BuildingType),
+    Resource(u8),
+}
+
+/*
+ * Contains the resource/building currently placed on the spot.
+ * 
+ * If a resource, then it contains list of all building that could be
+ * placed at this location.
+ * 
+ * If a building, then list is empty
+ * 
+ */
+pub struct PlayerTileInfo {
+    tile: TileType,
+    possible_buildings: [BuildingType; BUILDING_TYPE_IN_GAME]
+}
+
+/*
+ * For placing a building:
+ * 
+ * GUI idea: click, drag, and confirm placement
+ * 
+ * Verify that all the tiles in desired placement contain building in
+ * the tile info
+ * 
+ */
+
 impl Player {
+
     pub fn new() -> Player {
         Player {
-            board: [[0; 4]; 4],
+            board: [[0; BOARD_SIZE]; BOARD_SIZE],
             score: 0,
         }
     }
@@ -32,10 +67,11 @@ impl Player {
     }
 
     pub fn match_tile(&self, row: usize, col: usize, tile: u8) -> bool {
-        if row < 4 && col < 4 {
+        println!("row:{}, col:{}", row, col);
+        if row < BOARD_SIZE && col < BOARD_SIZE {
             println!("BoardTile:{}", Tiles::number_to_tile(self.board[row][col]))
         }
-        tile == 0 || (row < 4 && col < 4 && self.board[row][col] == tile)
+        tile == 0 || (row < BOARD_SIZE && col < BOARD_SIZE && self.board[row][col] == tile)
     }
 
     /*
@@ -111,6 +147,22 @@ impl Player {
         return false;
     }
 
+    
+
+    /*
+     *
+     *  Search for building on board at start_row and start_col
+     *  in this orientation:
+     * 
+     *  | a, b, c, d|
+     *  | e, f, g, h|
+     * 
+     * Parameters:
+     * building: building being searched for on board
+     * start_row: start row for search
+     * start_col: start col for search
+     *
+     */
     fn verify_building(&self, building: &Building, start_row: usize, start_col: usize) -> bool {
         println!(
             "start_row: {}, start_col: {}",
@@ -128,13 +180,30 @@ impl Player {
             }
             print!("\n");
         }
+        label_
         true
     }
 
+    /*
+     *
+     *  Search for building on board at start_row and start_col
+     *  in this orientation (90 degrees clockwise):
+     * 
+     *  | e, a|
+     *  | f, b|
+     *  | g, c|
+     *  | h, d|
+     * 
+     * Parameters:
+     * building: building being searched for on board
+     * start_row: start row for search
+     * start_col: start col for search
+     *
+     */
     fn verify_building_90_degrees(&self, building: &Building, start_row: usize, start_col: usize) -> bool {
         for col in 0..building.get_shape()[0].len() {
             for row in (0..building.get_shape().len()).rev() {
-                print!("Building: {},", Tiles::number_to_tile(building.get_shape()[row][col]));
+                println!("Building: {},", Tiles::number_to_tile(building.get_shape()[row][col]));
                 if !self.match_tile(start_row+col, start_col+(building.get_shape().len()-row-1), building.get_shape()[row][col]) {
                     println!("NOPE! Building cannot be placed on board");
                     return false;
@@ -146,6 +215,20 @@ impl Player {
         true
     }
 
+    /*
+     *
+     *  Search for building on board at start_row and start_col
+     *  in this orientation (180 degrees clockwise):
+     * 
+     *  | h, g, f, e|
+     *  | d, c, b, a|
+     * 
+     * Parameters:
+     * building: building being searched for on board
+     * start_row: start row for search
+     * start_col: start col for search
+     *
+     */
     fn verify_building_180_degrees(&self, building: &Building, start_row: usize, start_col: usize) -> bool {
         for row in (0..building.get_shape().len()).rev() {
             for col in (0..building.get_shape()[0].len()).rev() {
@@ -162,11 +245,28 @@ impl Player {
         true
     }
 
+    /*
+     *
+     *  Search for building on board at start_row and start_col
+     *  in this orientation (270 degrees clockwise):
+     * 
+     *  | d, h|
+     *  | c, g|
+     *  | b, f|
+     *  | a, e|
+     * 
+     * Parameters:
+     * building: building being searched for on board
+     * start_row: start row for search
+     * start_col: start col for search
+     *
+     */
     fn verify_building_270_degrees(&self, building: &Building, start_row: usize, start_col: usize) -> bool {
         for col in (0..building.get_shape()[0].len()).rev() {
             for row in 0..building.get_shape().len() {
-                print!("Building: {},", Tiles::number_to_tile(building.get_shape()[row][col]));
-                if !self.match_tile(start_row + row, start_col + col, building.get_shape()[row][col]) {
+                println!("start_col: {},", start_col);
+                println!("Building: {},", Tiles::number_to_tile(building.get_shape()[row][col]));
+                if !self.match_tile(start_row + (building.get_shape()[0].len()-col-1), start_col + row, building.get_shape()[row][col]) {
                     println!("NOPE! Building cannot be placed on board");
                     return false;
                 }
