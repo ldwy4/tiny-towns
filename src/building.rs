@@ -1,5 +1,5 @@
-use crate::tiles::Tiles;
 use crate::player::Player;
+use crate::tiles::Tiles;
 pub struct Building {
     kind: BuildingType,
     shape: [[u8; 4]; 2],
@@ -179,13 +179,27 @@ mod tests {
         player.place_tile(1, 0, 4);
         player.place_tile(0, 2, 2);
 
-        let building = Building::new(BuildingType::House,
-            [[1, 2, 0, 0], [0, 0, 0, 0]], false);
+        let building = Building::new(BuildingType::House, [[1, 2, 0, 0], [0, 0, 0, 0]], false);
         building.print_building();
         building.print_building_90();
         building.print_building_180();
         building.print_building_270();
         player.print_board();
+        let result = player.match_building(&building);
+        assert_eq!(result, true);
+    }
+
+    #[test]
+    fn it_rotated_180_match_edge() {
+        let mut player: Player = Player::new();
+        player.place_tile(1, 1, 1);
+        player.place_tile(1, 0, 2);
+
+        let building = Building::new(BuildingType::House, [[1, 2, 0, 0], [0, 0, 0, 0]], false);
+
+        player.print_board();
+        building.print_building();
+
         let result = player.match_building(&building);
         assert_eq!(result, true);
     }
