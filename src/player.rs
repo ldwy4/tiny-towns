@@ -40,6 +40,12 @@ pub struct PlayerTileInfo {
  * Verify that all the tiles in desired placement contain building in
  * the tile info
  * 
+ * - Remove Empty tiles from GUI
+ * 
+ * - MVP, get someone to place a building
+ * - start cli implementation
+ * - allow users to input to cli resource type and location on board
+ * 
  */
 
 impl Player {
@@ -66,7 +72,10 @@ impl Player {
         self.board[row][col] = tile;
     }
 
-    pub fn match_tile(&self, row: usize, col: usize, tile: u8) -> bool {
+    pub fn match_tile(&self, row: i8, col: usize, tile: u8) -> bool {
+        if row < 0 || col < 0 {
+            return true
+        }
         println!("row:{}, col:{}", row, col);
         if row < BOARD_SIZE && col < BOARD_SIZE {
             println!("BoardTile:{}", Tiles::number_to_tile(self.board[row][col]))
@@ -78,7 +87,7 @@ impl Player {
      *   implementation to check if the building can be placed on board
      */
     // todo : this should return a list of tuples of each possible coordinate
-    pub fn match_building(&self, building: Building) -> bool {
+    pub fn match_building(&self, building: &Building) -> bool {
         /*
          * - outer loop rotate
          *     - inner loop vertical
@@ -111,33 +120,38 @@ impl Player {
         start_row: usize,
         start_col: usize,
     ) -> bool {
+        println!(
+            "start_row: {}, start_col: {}",
+            start_row,
+            start_col
+        );
         for rotation in 0..4 {
             match rotation {
                 0 => {
-                    println!("start 0 degrees");
+                    // println!("start 0 degrees");
                     if self.verify_building(building, start_row, start_col) {
-                        println!("0 degrees");
+                        // println!("0 degrees");
                         return true;
                     }
                 }
                 1 => {
-                    println!("start 90 degrees");
+                    // println!("start 90 degrees");
                     if self.verify_building_90_degrees(building, start_row, start_col) {
-                        println!("90 degrees");
+                        // println!("90 degrees");
                         return true;
                     }
                 }
                 2 => {
-                    println!("start 180 degrees");
+                    // println!("start 180 degrees");
                     if self.verify_building_180_degrees(building, start_row, start_col) {
-                        println!("180 degrees");
+                        // println!("180 degrees");
                         return true;
                     }
                 }
                 3 => {
-                    println!("start 270 degrees");
+                    // println!("start 270 degrees");
                     if self.verify_building_270_degrees(building, start_row, start_col) {
-                        println!("270 degrees");
+                        // println!("270 degrees");
                         return true;
                     }
                 }
@@ -164,23 +178,14 @@ impl Player {
      *
      */
     fn verify_building(&self, building: &Building, start_row: usize, start_col: usize) -> bool {
-        println!(
-            "start_row: {}, start_col: {}",
-            start_row,
-            start_col
-        );
         for row in 0..building.get_shape().len() {
             for col in 0..building.get_shape()[0].len() {
-                print!("{},", Tiles::number_to_tile(building.get_shape()[row][col]));
                 if !self.match_tile(start_row+row, start_col+col, building.get_shape()[row][col]) {
-                    println!("NOPE! Building cannot be placed on board");
                     return false;
                 }
-                print!("\n");
             }
-            print!("\n");
         }
-        label_
+        // add building to tiles
         true
     }
 
@@ -203,14 +208,10 @@ impl Player {
     fn verify_building_90_degrees(&self, building: &Building, start_row: usize, start_col: usize) -> bool {
         for col in 0..building.get_shape()[0].len() {
             for row in (0..building.get_shape().len()).rev() {
-                println!("Building: {},", Tiles::number_to_tile(building.get_shape()[row][col]));
                 if !self.match_tile(start_row+col, start_col+(building.get_shape().len()-row-1), building.get_shape()[row][col]) {
-                    println!("NOPE! Building cannot be placed on board");
                     return false;
                 }
-                print!("\n");
             }
-            print!("\n");
         }
         true
     }
@@ -232,15 +233,12 @@ impl Player {
     fn verify_building_180_degrees(&self, building: &Building, start_row: usize, start_col: usize) -> bool {
         for row in (0..building.get_shape().len()).rev() {
             for col in (0..building.get_shape()[0].len()).rev() {
-                print!("{},", Tiles::number_to_tile(building.get_shape()[row][col]));
                 if !self.match_tile(start_row + (building.get_shape().len()-row-1),
                  start_col + (building.get_shape()[0].len()-col-1),
                 building.get_shape()[row][col]) {
-                    println!("NOPE! Building cannot be placed on board");
                     return false;
                 }
             }
-            print!("\n");
         }
         true
     }
@@ -264,14 +262,17 @@ impl Player {
     fn verify_building_270_degrees(&self, building: &Building, start_row: usize, start_col: usize) -> bool {
         for col in (0..building.get_shape()[0].len()).rev() {
             for row in 0..building.get_shape().len() {
-                println!("start_col: {},", start_col);
-                println!("Building: {},", Tiles::number_to_tile(building.get_shape()[row][col]));
-                if !self.match_tile(start_row + (building.get_shape()[0].len()-col-1), start_col + row, building.get_shape()[row][col]) {
-                    println!("NOPE! Building cannot be placed on board");
+                if start_row == 1 && start_col == 1{
+                    if row < BOARD_SIZE && col < BOARD_SIZE {
+                        print!("HEREDOOD: {}", Tiles::number_to_tile(building.get_shape()[row][col]))
+                    }
+                }
+                if !self.match_tile(start_row - col,
+                 start_col + row,
+                  building.get_shape()[row][col]) {
                     return false;
                 }
             }
-            print!("\n");
         }
         true
     }

@@ -6,7 +6,6 @@ pub enum Tiles {
     Brick,
     Glass,
     Stone,
-    Well,
     Wood,
 }
 
@@ -18,7 +17,6 @@ impl Tiles {
             2 => Tiles::Brick,
             3 => Tiles::Glass,
             4 => Tiles::Stone,
-            5 => Tiles::Well,
             6 => Tiles::Wood,
             _ => Tiles::Empty,
         }
@@ -31,8 +29,18 @@ impl Tiles {
             Tiles::Brick => 2,
             Tiles::Glass => 3,
             Tiles::Stone => 4,
-            Tiles::Well => 5,
             Tiles::Wood => 6,
+        }
+    }
+
+    pub fn string_to_tile(tile: &str) -> Tiles {
+        match tile {
+            "Wheat" | "wheat" => Tiles::Wheat,
+            "Brick" | "brick" => Tiles::Brick,
+            "Glass" | "glass" => Tiles::Glass,
+            "Stone" | "stone" => Tiles::Stone,
+            "Wood" | "wood" => Tiles::Wood,
+            _ => Tiles::Empty,
         }
     }
 }
@@ -44,7 +52,6 @@ impl fmt::Display for Tiles {
             Tiles::Brick => String::from("Brick"),
             Tiles::Glass => String::from("Glass"),
             Tiles::Stone => String::from("Stone"),
-            Tiles::Well => String::from("Well"),
             Tiles::Wood => String::from("Wood"),
             _ => String::from("Empty"),
         };

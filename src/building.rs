@@ -117,7 +117,7 @@ mod tests {
         player.place_tile(0, 1, 3);
 
         let building = Building::new(BuildingType::House, [[1, 2, 3, 0], [0, 0, 0, 0]], false);
-        let result = player.match_building(building);
+        let result = player.match_building(&building);
         assert_eq!(result, true);
     }
 
@@ -132,7 +132,7 @@ mod tests {
         player.place_tile(0, 1, 3);
 
         let building = Building::new(BuildingType::House, [[1, 2, 3, 0], [0, 0, 0, 0]], false);
-        let result = player.match_building(building);
+        let result = player.match_building(&building);
         assert_eq!(result, true);
     }
 
@@ -147,7 +147,7 @@ mod tests {
         player.place_tile(0, 1, 3);
 
         let building = Building::new(BuildingType::House, [[1, 2, 3, 0], [0, 0, 0, 0]], false);
-        let result = player.match_building(building);
+        let result = player.match_building(&building);
         assert_eq!(result, true);
     }
 
@@ -167,7 +167,26 @@ mod tests {
         building.print_building_180();
         building.print_building_270();
         player.print_board();
-        let result = player.match_building(building);
+        let result = player.match_building(&building);
+        assert_eq!(result, true);
+    }
+
+    #[test]
+    fn upright_two_resource_building() {
+        let mut player: Player = Player::new();
+        player.place_tile(1, 1, 1);
+        player.place_tile(0, 1, 2);
+        player.place_tile(1, 0, 4);
+        player.place_tile(0, 2, 2);
+
+        let building = Building::new(BuildingType::House,
+            [[1, 2, 0, 0], [0, 0, 0, 0]], false);
+        building.print_building();
+        building.print_building_90();
+        building.print_building_180();
+        building.print_building_270();
+        player.print_board();
+        let result = player.match_building(&building);
         assert_eq!(result, true);
     }
 }
