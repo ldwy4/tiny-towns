@@ -1,5 +1,6 @@
 use crate::player::Player;
 use crate::tiles::Tiles;
+use crate::building_matcher::match_building;
 pub struct Building {
     kind: BuildingType,
     shape: [[u8; 4]; 2],
@@ -117,7 +118,7 @@ mod tests {
         player.place_tile(0, 1, 3);
 
         let building = Building::new(BuildingType::House, [[1, 2, 3, 0], [0, 0, 0, 0]], false);
-        let result = player.match_building(&building);
+        let result = match_building(&player, &building);
         assert_eq!(result, true);
     }
 
@@ -132,7 +133,7 @@ mod tests {
         player.place_tile(0, 1, 3);
 
         let building = Building::new(BuildingType::House, [[1, 2, 3, 0], [0, 0, 0, 0]], false);
-        let result = player.match_building(&building);
+        let result = match_building(&player, &building);
         assert_eq!(result, true);
     }
 
@@ -147,7 +148,7 @@ mod tests {
         player.place_tile(0, 1, 3);
 
         let building = Building::new(BuildingType::House, [[1, 2, 3, 0], [0, 0, 0, 0]], false);
-        let result = player.match_building(&building);
+        let result = match_building(&player, &building);
         assert_eq!(result, true);
     }
 
@@ -167,7 +168,7 @@ mod tests {
         building.print_building_180();
         building.print_building_270();
         player.print_board();
-        let result = player.match_building(&building);
+        let result = match_building(&player, &building);
         assert_eq!(result, true);
     }
 
@@ -185,7 +186,7 @@ mod tests {
         building.print_building_180();
         building.print_building_270();
         player.print_board();
-        let result = player.match_building(&building);
+        let result = match_building(&player, &building);
         assert_eq!(result, true);
     }
 
@@ -200,7 +201,22 @@ mod tests {
         player.print_board();
         building.print_building();
 
-        let result = player.match_building(&building);
+        let result = match_building(&player, &building);
+        assert_eq!(result, true);
+    }
+
+    #[test]
+    fn it_rotated_90_match_edge() {
+        let mut player: Player = Player::new();
+        player.place_tile(2, 0, 1);
+        player.place_tile(3, 0, 2);
+
+        let building = Building::new(BuildingType::House, [[1, 2, 0, 0], [0, 0, 0, 0]], false);
+
+        player.print_board();
+        building.print_building();
+
+        let result = match_building(&player, &building);
         assert_eq!(result, true);
     }
 }

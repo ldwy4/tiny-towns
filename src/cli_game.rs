@@ -1,6 +1,7 @@
 use crate::player::{self, Player};
 use crate::tiles::Tiles;
 use crate::building::{Building, BuildingType};
+use crate::building_matcher::match_building;
 
 use std::io;
 
@@ -26,7 +27,7 @@ pub fn select_tile_loops(player: &mut Player) {
             place_tile_loop(player, tile)
         }
         player.print_board();
-        if player.match_building(&building) {
+        if match_building(player, &building) {
         println!("YOU CAN BUILD A HOUSE")
     }
     }

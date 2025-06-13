@@ -1,4 +1,5 @@
 mod building;
+mod building_matcher;
 mod player;
 mod tiles;
 mod cli_game;
