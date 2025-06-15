@@ -1,16 +1,16 @@
-use crate::building::Building;
 use crate::player::Player;
-use crate::tiles::Tiles;
+use crate::tiles::Tile;
+use crate::tiles::building::Building;
 
 const BOARD_SIZE: usize = 4;
 
 /*
  * This file contains all the functions necessary to see if a building
  * exists on the board
- * 
+ *
  */
 
-pub fn match_tile(player: &Player, row: usize, col: usize, tile: u8) -> bool {
+pub fn match_tile(player: &Player, row: usize, col: usize, tile: Tile) -> bool {
     if row < 0 || col < 0 {
         return true;
     }
@@ -18,7 +18,8 @@ pub fn match_tile(player: &Player, row: usize, col: usize, tile: u8) -> bool {
     if row < BOARD_SIZE && col < BOARD_SIZE {
         // println!("BoardTile:{}", Tiles::number_to_tile(player.board[row][col]))
     }
-    tile == 0 || (row < BOARD_SIZE && col < BOARD_SIZE && player.get_board()[row][col] == tile)
+    tile.is_empty()
+        || (row < BOARD_SIZE && col < BOARD_SIZE && player.get_board()[row][col] == tile)
 }
 
 /*
@@ -50,7 +51,7 @@ pub fn match_building(player: &Player, building: &Building) -> bool {
     return false;
 }
 
-fn verify_building_rotation(
+pub fn verify_building_rotation(
     player: &Player,
     building: &Building,
     start_row: usize,
@@ -107,16 +108,16 @@ fn verify_building_rotation(
  * start_col: start col for search
  *
  */
-fn verify_building(player: &Player, building: &Building, start_row: usize, start_col: usize) -> bool {
+pub fn verify_building(
+    player: &Player,
+    building: &Building,
+    start_row: usize,
+    start_col: usize,
+) -> bool {
     for row in 0..building.get_shape().len() {
         for col in 0..building.get_shape()[0].len() {
             let tile = building.get_shape()[row][col];
-            if !match_tile(
-                player,
-                start_row + row,
-                start_col + col,
-                tile,
-            ) {
+            if !match_tile(player, start_row + row, start_col + col, tile) {
                 return false;
             }
         }
@@ -151,17 +152,12 @@ fn verify_building_90_degrees(
         for row in (0..building.get_shape().len()).rev() {
             let tile = building.get_shape()[row][col];
             if is_negative_index(start_col, row) {
-                if tile != 0 {
+                if !tile.is_empty() {
                     return false;
                 }
                 continue;
             }
-            if !match_tile(
-                player,
-                start_row + col,
-                start_col - row,
-                tile,
-            ) {
+            if !match_tile(player, start_row + col, start_col - row, tile) {
                 return false;
             }
         }
@@ -194,10 +190,8 @@ fn verify_building_180_degrees(
             // todo: move this check into match_tile function
             // There will be a false positive case if non-empty tiles are out of bounds
             let tile = building.get_shape()[row][col];
-            if (is_negative_index(start_col, col)
-                || is_negative_index(start_row, row))
-            {
-                if tile != 0 {
+            if (is_negative_index(start_col, col) || is_negative_index(start_row, row)) {
+                if !tile.is_empty() {
                     return false;
                 }
                 continue;
@@ -244,7 +238,7 @@ fn verify_building_270_degrees(
             // }
             let tile = building.get_shape()[row][col];
             if is_negative_index(start_row, col) {
-                if tile != 0 {
+                if !tile.is_empty() {
                     return false;
                 }
                 continue;

@@ -1,21 +1,17 @@
 use std::collections::btree_map::Range;
 use std::iter::Rev;
 
-use crate::building::{Building, BuildingType};
-use crate::tiles::Tiles;
+use crate::tiles::Tile;
+use crate::tiles::building::BuildingType;
+use crate::tiles::resources::Resources;
 
 const BOARD_SIZE: usize = 4;
 // TODO: change be a variable passed in on game creation
 const BUILDING_TYPE_IN_GAME: usize = 7;
 
 pub struct Player {
-    board: [[u8; BOARD_SIZE]; BOARD_SIZE],
+    board: [[Tile; BOARD_SIZE]; BOARD_SIZE],
     score: i32,
-}
-
-pub enum TileType {
-    BuildingType(BuildingType),
-    Resource(u8),
 }
 
 /*
@@ -27,10 +23,10 @@ pub enum TileType {
  * If a building, then list is empty
  *
  */
-pub struct PlayerTileInfo {
-    tile: TileType,
-    possible_buildings: [BuildingType; BUILDING_TYPE_IN_GAME],
-}
+// pub struct PlayerTileInfo {
+//     tile: TileType,
+//     possible_buildings: [BuildingType; BUILDING_TYPE_IN_GAME],
+// }
 
 /*
  * For placing a building:
@@ -51,7 +47,7 @@ pub struct PlayerTileInfo {
 impl Player {
     pub fn new() -> Player {
         Player {
-            board: [[0; BOARD_SIZE]; BOARD_SIZE],
+            board: [[Tile::Resource(Resources::Empty); BOARD_SIZE]; BOARD_SIZE],
             score: 0,
         }
     }
@@ -61,17 +57,17 @@ impl Player {
         println!("Board:");
         for row in &self.board {
             for cell in row {
-                print!("{},", Tiles::number_to_tile(*cell));
+                print!("{},", *cell);
             }
             print!("\n");
         }
     }
 
-    pub fn place_tile(&mut self, row: usize, col: usize, tile: u8) {
+    pub fn place_tile(&mut self, row: usize, col: usize, tile: Tile) {
         self.board[row][col] = tile;
     }
 
-    pub fn get_board(&self) -> &[[u8; BOARD_SIZE]; BOARD_SIZE] {
+    pub fn get_board(&self) -> &[[Tile; BOARD_SIZE]; BOARD_SIZE] {
         &self.board
     }
 }

@@ -1,15 +1,82 @@
-use crate::player::{self, Player};
-use crate::tiles::Tiles;
-use crate::building::{Building, BuildingType};
 use crate::building_matcher::match_building;
-
+use crate::building_placer::place_building;
+use crate::player::{self, Player};
+use crate::tiles::Tile;
+use crate::tiles::building::{ALL_BUILDINGS, Building, BuildingType};
+use crate::tiles::resources::Resources;
 use std::io;
 
-pub fn select_tile_loops(player: &mut Player) {
+pub fn game_initiate() {
+    let mut player: Player = Player::new();
+    let building = Building::new(
+        BuildingType::House,
+        [
+            [
+                Tile::Resource(Resources::Wheat),
+                Tile::Resource(Resources::Brick),
+                Tile::Resource(Resources::Glass),
+                Tile::Resource(Resources::Empty),
+            ],
+            [
+                Tile::Resource(Resources::Empty),
+                Tile::Resource(Resources::Empty),
+                Tile::Resource(Resources::Empty),
+                Tile::Resource(Resources::Empty),
+            ],
+        ],
+        false,
+    );
+    select_tile_loop(&mut player, &building);
+}
+
+fn select_tile_loop(player: &mut Player, building: &Building) {
     let mut input = String::new();
-    let building = Building::new(BuildingType::House,
-        [[1, 2, 0, 0], [0, 0, 0, 0]], false);
+
     loop {
+        println!("Wanna try placing a building?");
+
+        io::stdin()
+            .read_line(&mut input)
+            .expect("Failed to read line");
+
+        if input.trim() == "exit" {
+            break;
+        }
+
+        if input.trim() == "yes" {
+            println!("Which building?");
+            for i in ALL_BUILDINGS {
+                println!("{}", i);
+            }
+
+            io::stdin()
+                .read_line(&mut input)
+                .expect("Failed to read line");
+
+            let buildingType = BuildingType::string_to_building(&input.trim());
+            input.clear();
+
+            println!("Which row (0-3)?");
+
+            io::stdin()
+                .read_line(&mut input)
+                .expect("Failed to read line");
+
+            let row = input.trim().parse().expect("Enter number between 0-3");
+            input.clear();
+
+            println!("Which col (0-3)?");
+
+            io::stdin()
+                .read_line(&mut input)
+                .expect("Failed to read line");
+
+            let col = input.trim().parse().expect("Enter number between 0-3");
+            input.clear();
+
+            place_building(player, &building, row, col);
+            player.print_board();
+        }
         println!("Enter a tile type:");
 
         io::stdin()
@@ -20,16 +87,16 @@ pub fn select_tile_loops(player: &mut Player) {
             break;
         }
 
-        let tile = Tiles::tile_to_number(Tiles::string_to_tile(&input.trim()));
+        let tile = Resources::tile_to_number(Resources::string_to_tile(&input.trim()));
         input.clear();
 
-        if tile != Tiles::tile_to_number(Tiles::Empty) {
+        if tile != Resources::tile_to_number(Resources::Empty) {
             place_tile_loop(player, tile)
         }
         player.print_board();
-        if match_building(player, &building) {
-        println!("YOU CAN BUILD A HOUSE")
-    }
+        if match_building(player, building) {
+            println!("YOU CAN BUILD A HOUSE")
+        }
     }
 }
 
@@ -43,12 +110,12 @@ pub fn place_tile_loop(player: &mut Player, tile: u8) {
 
         // read input
         io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read line");
+            .read_line(&mut input)
+            .expect("Failed to read line");
 
         row = input.trim().parse().expect("Enter number between 0-3");
         input.clear(); // clear buffer
-        
+
         match row {
             0..4 => break,
             _ => println!("Enter number between 0 and 3:"),
@@ -59,8 +126,8 @@ pub fn place_tile_loop(player: &mut Player, tile: u8) {
         println!("Enter col (0-3):");
 
         io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read line");
+            .read_line(&mut input)
+            .expect("Failed to read line");
 
         col = input.trim().parse().expect("Enter number between 0-3");
         input.clear(); // clear buffer
@@ -70,5 +137,5 @@ pub fn place_tile_loop(player: &mut Player, tile: u8) {
         }
     }
 
-    player.place_tile(row, col, tile);
+    player.place_tile(row, col, Tile::Resource(Resources::number_to_tile(tile)));
 }
