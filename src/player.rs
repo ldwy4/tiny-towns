@@ -1,5 +1,4 @@
 use crate::tiles::Tile;
-use crate::tiles::building::BuildingType;
 use crate::tiles::resources::Resources;
 
 const BOARD_SIZE: usize = 4;

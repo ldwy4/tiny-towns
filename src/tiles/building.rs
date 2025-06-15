@@ -100,30 +100,6 @@ impl Building {
         self.shape
     }
 
-    // pub fn last_non_empty_tile_col(&self) -> usize {
-    //     let mut end = 0;
-    //     for row in &self.shape {
-    //         for col in 0..row.len() {
-    //             if row[col] != 0 && col > end {
-    //                 end = col;
-    //             }
-    //         }
-    //     }
-    //     return end;
-    // }
-
-    pub fn last_non_empty_tile_row(&self) -> usize {
-        let mut end = 0;
-        for row in 0..self.shape.len() {
-            for col in 0..self.shape[0].len() {
-                if !self.shape[row][col].is_empty() && row > end {
-                    end = row;
-                }
-            }
-        }
-        return end;
-    }
-
     pub fn print_shape(&self) {
         for row in &self.shape {
             for cell in row {

@@ -11,9 +11,6 @@ const BOARD_SIZE: usize = 4;
  */
 
 pub fn match_tile(player: &Player, row: usize, col: usize, tile: Tile) -> bool {
-    if row < 0 || col < 0 {
-        return true;
-    }
     // println!("row:{}, col:{}", row, col);
     if row < BOARD_SIZE && col < BOARD_SIZE {
         // println!("BoardTile:{}", Tiles::number_to_tile(player.board[row][col]))
@@ -189,7 +186,7 @@ pub fn verify_building_180_degrees(
     for row in (0..building.get_shape().len()).rev() {
         for col in (0..building.get_shape()[0].len()).rev() {
             let tile = building.get_shape()[row][col];
-            if (is_negative_index(start_col, col) || is_negative_index(start_row, row)) {
+            if is_negative_index(start_col, col) || is_negative_index(start_row, row) {
                 if !tile.is_empty() {
                     return false;
                 }

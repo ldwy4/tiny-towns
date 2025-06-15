@@ -4,7 +4,6 @@ use crate::placement_logic::building_matcher::{
 };
 use crate::player::Player;
 use crate::tiles::Building;
-use crate::tiles::BuildingType;
 use crate::tiles::Resources;
 use crate::tiles::Tile;
 /*
@@ -189,6 +188,7 @@ pub fn replace_resources_with_building_270(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::tiles::BuildingType;
 
     #[test]
     fn test_place_building() {
