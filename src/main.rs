@@ -1,6 +1,5 @@
-mod building_matcher;
-mod building_placer;
 mod cli_game;
+mod placement_logic;
 mod player;
 mod tiles;
 fn main() {

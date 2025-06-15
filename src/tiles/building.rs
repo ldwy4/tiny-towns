@@ -1,4 +1,4 @@
-use crate::building_matcher::match_building;
+use crate::placement_logic::building_matcher::match_building;
 use crate::player::Player;
 use crate::tiles::Tile;
 use crate::tiles::resources::Resources;
@@ -6,7 +6,6 @@ use std::fmt;
 pub struct Building {
     kind: BuildingType,
     shape: [[Tile; 4]; 2],
-    secondFloor: bool, // true if building has a second floor
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -46,11 +45,10 @@ impl fmt::Display for BuildingType {
 }
 
 impl Building {
-    pub fn new(building_type: BuildingType, shape: [[Tile; 4]; 2], secondFloor: bool) -> Building {
+    pub fn new(building_type: BuildingType, shape: [[Tile; 4]; 2]) -> Building {
         Building {
             kind: building_type,
             shape: shape,
-            secondFloor: secondFloor,
         }
     }
 
@@ -100,10 +98,6 @@ impl Building {
 
     pub fn get_shape(&self) -> [[Tile; 4]; 2] {
         self.shape
-    }
-
-    pub fn get_second_floor(&self) -> bool {
-        self.secondFloor
     }
 
     // pub fn last_non_empty_tile_col(&self) -> usize {
@@ -170,7 +164,6 @@ mod tests {
                     Tile::Resource(Resources::Empty),
                 ],
             ],
-            false,
         );
         let result = match_building(&player, &building);
         assert_eq!(result, true);
@@ -202,7 +195,6 @@ mod tests {
                     Tile::Resource(Resources::Empty),
                 ],
             ],
-            false,
         );
         let result = match_building(&player, &building);
         assert_eq!(result, true);
@@ -234,7 +226,6 @@ mod tests {
                     Tile::Resource(Resources::Empty),
                 ],
             ],
-            false,
         );
         let result = match_building(&player, &building);
         assert_eq!(result, true);
@@ -266,7 +257,6 @@ mod tests {
                     Tile::Resource(Resources::Empty),
                 ],
             ],
-            false,
         );
         building.print_building();
         building.print_building_90();
@@ -301,7 +291,6 @@ mod tests {
                     Tile::Resource(Resources::Empty),
                 ],
             ],
-            false,
         );
         building.print_building();
         building.print_building_90();
@@ -334,7 +323,6 @@ mod tests {
                     Tile::Resource(Resources::Empty),
                 ],
             ],
-            false,
         );
         player.print_board();
         building.print_building();
@@ -365,7 +353,6 @@ mod tests {
                     Tile::Resource(Resources::Empty),
                 ],
             ],
-            false,
         );
         player.print_board();
         building.print_building();

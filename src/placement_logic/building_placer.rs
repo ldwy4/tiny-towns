@@ -1,4 +1,4 @@
-use crate::building_matcher::{
+use crate::placement_logic::building_matcher::{
     verify_building, verify_building_90_degrees, verify_building_180_degrees,
     verify_building_270_degrees,
 };
@@ -27,12 +27,6 @@ pub fn place_building(
         2 => verify_building_and_place_180(player, building, placement_row, placement_col),
         3 => verify_building_and_place_270(player, building, placement_row, placement_col),
         _ => println!("Invalid rotation"),
-    }
-    // if building is valid, replace resources with building tile
-    if verify_building(player, building, placement_row, placement_col) {
-        replace_resources_with_building(player, building, placement_row, placement_col);
-    } else {
-        println!("Invalid building placement");
     }
 }
 
@@ -222,7 +216,6 @@ mod tests {
                     Tile::Resource(Resources::Empty),
                 ],
             ],
-            false,
         );
         player.print_board();
         place_building(&mut player, &building, 1, 1, 0);
@@ -261,7 +254,6 @@ mod tests {
                     Tile::Resource(Resources::Empty),
                 ],
             ],
-            false,
         );
         player.print_board();
         place_building(&mut player, &building, 1, 1, 1);
@@ -297,7 +289,6 @@ mod tests {
                     Tile::Resource(Resources::Empty),
                 ],
             ],
-            false,
         );
         player.print_board();
         place_building(&mut player, &building, 0, 3, 2);
@@ -333,7 +324,6 @@ mod tests {
                     Tile::Resource(Resources::Empty),
                 ],
             ],
-            false,
         );
         player.print_board();
         place_building(&mut player, &building, 3, 0, 3);

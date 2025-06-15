@@ -188,8 +188,6 @@ pub fn verify_building_180_degrees(
 ) -> bool {
     for row in (0..building.get_shape().len()).rev() {
         for col in (0..building.get_shape()[0].len()).rev() {
-            // todo: move this check into match_tile function
-            // There will be a false positive case if non-empty tiles are out of bounds
             let tile = building.get_shape()[row][col];
             if (is_negative_index(start_col, col) || is_negative_index(start_row, row)) {
                 if !tile.is_empty() {

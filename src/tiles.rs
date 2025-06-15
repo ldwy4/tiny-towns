@@ -31,3 +31,8 @@ impl Tile {
         }
     }
 }
+
+/*
+ * Tiles could be a node and connected to other nodes with direction to create a building (graph)
+ * verification could be if it is possible to tranverse graph
+ */

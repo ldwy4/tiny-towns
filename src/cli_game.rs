@@ -1,5 +1,5 @@
-use crate::building_matcher::match_building;
-use crate::building_placer::place_building;
+use crate::placement_logic::building_matcher::match_building;
+use crate::placement_logic::building_placer::place_building;
 use crate::player::{self, Player};
 use crate::tiles::Tile;
 use crate::tiles::building::{ALL_BUILDINGS, Building, BuildingType};
@@ -24,7 +24,6 @@ pub fn game_initiate() {
                 Tile::Resource(Resources::Empty),
             ],
         ],
-        false,
     );
     select_tile_loop(&mut player, &building);
 }
@@ -44,6 +43,7 @@ fn select_tile_loop(player: &mut Player, building: &Building) {
         }
 
         if input.trim() == "yes" {
+            input.clear();
             println!("Which building?");
             for i in ALL_BUILDINGS {
                 println!("{}", i);
@@ -74,9 +74,19 @@ fn select_tile_loop(player: &mut Player, building: &Building) {
             let col = input.trim().parse().expect("Enter number between 0-3");
             input.clear();
 
-            place_building(player, &building, row, col, 0);
+            println!("Which rotation (0-3)?");
+
+            io::stdin()
+                .read_line(&mut input)
+                .expect("Failed to read line");
+
+            let rotation = input.trim().parse().expect("Enter number between 0-3");
+            input.clear();
+
+            place_building(player, &building, row, col, rotation);
             player.print_board();
         }
+        input.clear();
         println!("Enter a tile type:");
 
         io::stdin()
