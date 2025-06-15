@@ -74,7 +74,7 @@ fn select_tile_loop(player: &mut Player, building: &Building) {
             let col = input.trim().parse().expect("Enter number between 0-3");
             input.clear();
 
-            place_building(player, &building, row, col);
+            place_building(player, &building, row, col, 0);
             player.print_board();
         }
         println!("Enter a tile type:");

@@ -41,10 +41,12 @@ pub fn match_building(player: &Player, building: &Building) -> bool {
             if start_col >= BOARD_SIZE {
                 break;
             }
-            // check if building exists here
-            if verify_building_rotation(player, &building, start_row, start_col) {
-                println!("YUPPPP!");
-                return true;
+            for rotation in 0..4 {
+                // check if building exists here
+                if verify_building_rotation(player, &building, start_row, start_col, rotation) {
+                    println!("YUPPPP!");
+                    return true;
+                }
             }
         }
     }
@@ -56,41 +58,40 @@ pub fn verify_building_rotation(
     building: &Building,
     start_row: usize,
     start_col: usize,
+    rotation: usize,
 ) -> bool {
     println!("start_row: {}, start_col: {}", start_row, start_col);
-    for rotation in 0..4 {
-        match rotation {
-            0 => {
-                // println!("start 0 degrees");
-                if verify_building(player, building, start_row, start_col) {
-                    // println!("0 degrees");
-                    return true;
-                }
+    match rotation {
+        0 => {
+            // println!("start 0 degrees");
+            if verify_building(player, building, start_row, start_col) {
+                // println!("0 degrees");
+                return true;
             }
-            1 => {
-                // println!("start 90 degrees");
-                if verify_building_90_degrees(player, building, start_row, start_col) {
-                    // println!("90 degrees");
-                    return true;
-                }
+        }
+        1 => {
+            // println!("start 90 degrees");
+            if verify_building_90_degrees(player, building, start_row, start_col) {
+                // println!("90 degrees");
+                return true;
             }
-            2 => {
-                // println!("start 180 degrees");
-                if verify_building_180_degrees(player, building, start_row, start_col) {
-                    // println!("180 degrees");
-                    return true;
-                }
+        }
+        2 => {
+            // println!("start 180 degrees");
+            if verify_building_180_degrees(player, building, start_row, start_col) {
+                // println!("180 degrees");
+                return true;
             }
-            3 => {
-                // println!("start 270 degrees");
-                if verify_building_270_degrees(player, building, start_row, start_col) {
-                    // println!("270 degrees");
-                    return true;
-                }
+        }
+        3 => {
+            // println!("start 270 degrees");
+            if verify_building_270_degrees(player, building, start_row, start_col) {
+                // println!("270 degrees");
+                return true;
             }
-            _ => unreachable!(),
-        };
-    }
+        }
+        _ => unreachable!(),
+    };
     return false;
 }
 
@@ -142,7 +143,7 @@ pub fn verify_building(
  * start_col: start col for search
  *
  */
-fn verify_building_90_degrees(
+pub fn verify_building_90_degrees(
     player: &Player,
     building: &Building,
     start_row: usize,
@@ -179,7 +180,7 @@ fn verify_building_90_degrees(
  * start_col: start col for search
  *
  */
-fn verify_building_180_degrees(
+pub fn verify_building_180_degrees(
     player: &Player,
     building: &Building,
     start_row: usize,
@@ -220,7 +221,7 @@ fn verify_building_180_degrees(
  * start_col: start col for search
  *
  */
-fn verify_building_270_degrees(
+pub fn verify_building_270_degrees(
     player: &Player,
     building: &Building,
     start_row: usize,
